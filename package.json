@@ -1,0 +1,14 @@
+{
+  "name": "advance-search-grammer-parser",
+  "version": "0.0.1",
+  "description": "a grammer for advance search",
+  "main": "index.js",
+  "scripts": {
+    "build": "pegjs -o grammer.js grammer.pegjs"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "pegjs": "^0.10.0"
+  }
+}
