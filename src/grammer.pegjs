@@ -12,7 +12,7 @@
 
     return tail.reduce((prev, cur) => ([
       ...prev,
-      Array.isArray(cur) ?
+      Array.isArray(cur[3]) ?
       {
         logic: cur[1],
         value: cur[3],
@@ -60,9 +60,34 @@
    * @returns {object} The number standard definition object
    */
   function parseNumber(num) {
-    const realNum = num.join('')
+    const realNum = (num[0] || '') + num[1].join('')
 
     return { type: 'number', value: parseInt(realNum, 10) }
+  }
+
+  /**
+   * Parse the float-like string array to standard definition object
+   *
+   * @param {array} num The matched float-like string array
+   *
+   * @returns {object} The float standard definition object
+   */
+  function parseFloatNumber(num) {
+    console.log(num)
+    const realNum = (num[0] || '') + num[1].join('') + (num[2] || '') + num[3].join('')
+
+    return { type: 'float', value: parseFloat(realNum, 10) }
+  }
+
+  /**
+   * Parse the boolean value to standard definition object
+   *
+   * @param {array} boolValue The boolean string
+   *
+   * @returns {object} The boolean standard definition object
+   */
+  function parseBoolean(boolValue) {
+    return { type: 'boolean', value: (/^true$/i).test(boolValue)}
   }
 
   /**
@@ -99,6 +124,20 @@
   }
 
   /**
+   * Parse the function params to standard definition object
+   *
+   * @param {object} head The first param
+   * @param {array} tail The tail params
+   *
+   * @returns {object} The function params standard definition object
+   */
+  function parseFunctionParams(head, tail) {
+    return tail.reduce((prev, cur) => ([
+      ...prev, cur[3],
+    ]), (head ? [head] : []))
+  }
+
+  /**
    * Parse Function to standard definition object
    *
    * @param {string} name The function name
@@ -123,7 +162,7 @@
       (prev, cur) => ([ ...prev, cur[2] ]), []
     )
 
-    return [].concat(head, tailList)
+    return [].concat((head || []), tailList)
   }
 
   /**
@@ -183,7 +222,9 @@ Term
     { return getTerm(field, value, reverse) }
 
 Factor
-  = Number
+  = Float
+  / Number
+  / Boolean
   / String
   / Function
 
@@ -264,23 +305,30 @@ String
   / "\"" starHead:Star? str:StringDefine? starTail:Star? "\""
     { return parseString(str, starHead, starTail) }
 
+NumPrefix
+  = "+" / "-"
+NormNumber
+  = [0-9]
+
 Number
-  = num:([0-9]+)
+  = num:(NumPrefix? NormNumber+)
     { return parseNumber(num) }
-NumberWith0
-  = num:[0-9]
-    { return parseNumber(num) }
-NumberWithout0
-  = num:[1-9]
-    { return parseNumber(num) }
+
+Boolean
+  = boolValue:("true" / "false")
+    { return parseBoolean(boolValue) }
+
+Float
+  = num:(NumPrefix? NormNumber* "." NormNumber+ )
+    { return parseFloatNumber(num) }
 
 VariableName
   = name:([a-zA-Z_][0-9a-zA-Z_]*)
     { return parseVariableName(name) }
 
 FunctionParams
-  = String
-  / Number
+  = head:Factor tail:(_ "," _ Factor)*
+    { return parseFunctionParams(head, tail) }
 FunctionInvoke
   = LeftBracket params:FunctionParams* RightBracket
     { return params }

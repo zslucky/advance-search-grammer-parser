@@ -2,13 +2,15 @@
   "name": "advance-search-grammer-parser",
   "version": "0.0.1",
   "description": "a grammer for advance search",
-  "main": "index.js",
+  "main": "./dist/index.js",
   "scripts": {
-    "build": "pegjs -o grammer.js grammer.pegjs"
+    "clean": "rm -rf ./dist && mkdir dist",
+    "build": "npm run clean && pegjs -o dist/grammer.js src/grammer.pegjs"
   },
   "author": "",
   "license": "MIT",
-  "dependencies": {
+  "dependencies": {},
+  "devDependencies": {
     "pegjs": "^0.10.0"
   }
 }
