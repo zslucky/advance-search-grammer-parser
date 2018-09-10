@@ -8,8 +8,6 @@
    * @returns {array} The exporession array
    */
   function getExpression(head, tail) {
-    const expArray = [head]
-
     return tail.reduce((prev, cur) => ([
       ...prev,
       Array.isArray(cur[3]) ?
@@ -23,7 +21,7 @@
         reverse: cur[3].reverse,
         value: cur[3].value,
       },
-    ]), expArray)
+    ]), (head ? [head] : []))
   }
 
   /**
@@ -201,8 +199,16 @@
    *
    * @returns {array} The standard definition range object
    */
-  function parseGroupRange(start, end) {
-    return { type: 'range', start, end }
+  function parseGroupRange(startSymbol, start, endSymbol, end) {
+    const isRangeOpen = symbol => (symbol === '{' || symbol === '}')
+
+    return {
+      type: 'range',
+      isStartOpen: isRangeOpen(startSymbol),
+      isEndOpen: isRangeOpen(endSymbol),
+      start,
+      end,
+    }
   }
 }
 
@@ -238,8 +244,8 @@ GroupContain
   = VerticalLine _ head:Factor _ tail:("," _ Factor)* _ VerticalLine
     { return parseGroupContain(head, tail) }
 GroupRange
-  = (LeftSquareBracket / LeftBrace) _ start:(Factor / Star) __ OPTo __ end:(Factor / Star) _ (RightSquareBracket / RightBrace)
-    { return parseGroupRange(start, end) }
+  = startSymbol:(LeftSquareBracket / LeftBrace) _ start:(Factor / Star) __ OPTo __ end:(Factor / Star) _ endSymbol:(RightSquareBracket / RightBrace)
+    { return parseGroupRange(startSymbol, start, endSymbol, end) }
 
 /**
  *  Logic operation Definition
