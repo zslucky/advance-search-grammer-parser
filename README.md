@@ -24,6 +24,12 @@ Expressions are consist of many `key:value` like words, So the basic grammer is:
 
 e.g.
 name: "lucky" and age: 18 or name: "lucy"
+
+// Group conditions
+name: "lucky" and (age: 18 or name: "lucy")
+
+// Reverse result
+name: not "lucky"
 ```
 
 #### Value Types
@@ -34,6 +40,6 @@ name: "lucky" and age: 18 or name: "lucy"
 - `Boolean` : `male: true` .
 - `Function` : `user: current_user()` , `deadline: date("1y1m2d", 2, current_user())`
 - Group:
-  - Or : `user: <"1", "2", current_user()>` .
-  - Contain: `tag: |"red", "small"|` .
-  - Range: `date: [ 150000000 TO 157000000 ]` , `date: { date("1y2m3d") TO 157000000 ]`
+  - `In` : `user: <"1", "2", current_user()>` .
+  - `Contain` : `tag: |"red", "small"|` .
+  - `Range` : `date: [ 150000000 TO 157000000 ]` , `date: { date("1y2m3d") TO 157000000 ]`

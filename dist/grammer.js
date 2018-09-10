@@ -148,7 +148,7 @@ function peg$parse(input, options) {
       peg$c4 = peg$literalExpectation(",", false),
       peg$c5 = function(head, tail) { return parseGroupIn(head, tail) },
       peg$c6 = function(head, tail) { return parseGroupContain(head, tail) },
-      peg$c7 = function(start, end) { return parseGroupRange(start, end) },
+      peg$c7 = function(startSymbol, start, end, endSymbol) { return parseGroupRange(startSymbol, start, endSymbol, end) },
       peg$c8 = "AND",
       peg$c9 = peg$literalExpectation("AND", false),
       peg$c10 = "and",
@@ -844,7 +844,7 @@ function peg$parse(input, options) {
                     }
                     if (s9 !== peg$FAILED) {
                       peg$savedPos = s0;
-                      s1 = peg$c7(s3, s7);
+                      s1 = peg$c7(s1, s3, s7, s9);
                       s0 = s1;
                     } else {
                       peg$currPos = s0;
@@ -1815,8 +1815,6 @@ function peg$parse(input, options) {
      * @returns {array} The exporession array
      */
     function getExpression(head, tail) {
-      const expArray = [head]
-
       return tail.reduce((prev, cur) => ([
         ...prev,
         Array.isArray(cur[3]) ?
@@ -1830,7 +1828,7 @@ function peg$parse(input, options) {
           reverse: cur[3].reverse,
           value: cur[3].value,
         },
-      ]), expArray)
+      ]), (head ? [head] : []))
     }
 
     /**
@@ -2008,8 +2006,16 @@ function peg$parse(input, options) {
      *
      * @returns {array} The standard definition range object
      */
-    function parseGroupRange(start, end) {
-      return { type: 'range', start, end }
+    function parseGroupRange(startSymbol, start, endSymbol, end) {
+      const isRangeOpen = symbol => (symbol === '{' || symbol === '}')
+
+      return {
+        type: 'range',
+        isStartOpen: isRangeOpen(startSymbol),
+        isEndOpen: isRangeOpen(endSymbol),
+        start,
+        end,
+      }
     }
 
 
