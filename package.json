@@ -9,7 +9,7 @@
   "scripts": {
     "clean": "rm -rf ./dist && mkdir dist",
     "build": "npm run clean && pegjs -o dist/grammer.js src/grammer.pegjs",
-    "test": ""
+    "test": "exit 0"
   },
   "author": "",
   "license": "MIT",
