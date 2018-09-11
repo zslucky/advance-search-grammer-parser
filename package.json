@@ -1,8 +1,8 @@
 {
   "name": "advance-search-grammer-parser",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "a grammer for advance search",
-  "main": "./dist/index.js",
+  "main": "./dist/grammer.js",
   "engines": {
     "node": ">=8.11.4"
   },
